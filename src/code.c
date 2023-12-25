@@ -11,11 +11,15 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "code.h"
 
 int3 dest(char *mne) {
     unsigned _BitInt(3) dest = 0;
+
+    if (mne == NULL)
+        return dest;
 
     char *c = mne;
     for (int i = 0; i < 3; ++i) {
@@ -34,6 +38,9 @@ int3 dest(char *mne) {
 
 int3 jump(char *mne) {
     unsigned _BitInt(3) jump = 0;
+
+    if (mne == NULL)
+        return jump;
 
     char *c = mne;
 
@@ -56,6 +63,11 @@ int3 jump(char *mne) {
 }
 
 int7 comp(char *m) {
+    if (m == NULL) {
+        fprintf(stderr, "*** encoder error: no comp\n");
+        exit(1);
+    }
+
     int7 a = 0b0000000;
     if (strchr(m, 'D'))
         a = 0b1000000;

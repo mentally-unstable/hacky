@@ -27,19 +27,9 @@ dest("D") ^ comp("M+1") ^ 0
 */
 
 int main(void) {
-    struct branch *to_write = parse_lines("x.asm");
-    write_free(to_write, "x.hack");
+    pwrite_lines("../x.asm", "out.hack");
     return 0;
 }
-
-struct branch *add(struct branch *trunk, inst state) {
-    struct branch new = { .statement = &state, .next = NULL };
-    trunk->next = &new;
-
-    struct branch *ref = &new;
-    return ref;
-}
-
 
 void symbol_type(char *str) {
     if (strchr(str, '@'))
@@ -52,7 +42,7 @@ void symbol_type(char *str) {
         current.type = CCMD;
 
     else {
-        fprintf(stderr, "RIP BOZO no symbol found for `%s`\n", str);
+        fprintf(stderr, "*** parse (lex) error no symbol found for `%s`\n", str);
         exit(1);
     }
 }
@@ -61,7 +51,7 @@ void value(char *str) {
     char *c = strchr(str, '@');
 
     if (!c) {
-        fprintf(stderr, "RIP BOZO `%s` not an ACMD\n", str);
+        fprintf(stderr, "*** parse error `%s` not an ACMD\n", str);
         exit(1);
     }
 
@@ -89,25 +79,31 @@ void parse_current(char *str) {
     }
 }
 
-struct branch *parse_lines(char *name) {
-    struct branch *cur = (struct branch *) malloc(sizeof(struct branch));
-    struct branch *first = cur;
+void pwrite_lines(char *in, char *out) {
+    FILE *fin;
+    if ((fin = fopen(in, "r")) == NULL) {
+        fprintf(stderr, "*** input file error\n");
+        exit(1);
+    }
 
-    FILE *fh;
-    if ((fh = fopen(name, "r")) == NULL) {
-        fprintf(stderr, "file error\n");
+    FILE *fout;
+    if ((fout = fopen(out, "wa+")) == NULL) {
+        fprintf(stderr, "*** output file error\n");
         exit(1);
     }
 
     char statement[10];
-    while (fgets(&statement[0], 10, fh)) {
+    while (fgets(&statement[0], 10, fin)) {
+        printf("------------------\n");
         clean(statement);
+/*        if (skip(statement))
+            continue;*/
 
         symbol_type(statement);
         parse_current(statement);
 
-        cur = add(cur, current);
-        printf("STA  %s\n", statement);
+        write(current, fout);
+
         printf("CMD  {%i(%s), %i, %s, %s, %s}\n",
                 current.type,
                 enumstr(current.type),
@@ -117,14 +113,43 @@ struct branch *parse_lines(char *name) {
                 current.jump);
     }
 
-    fclose(fh);
-    free(cur);
-
-    return first;
+    fclose(fin);
+    fclose(fout);
 }
 
-void write_free(struct branch *tree, char *out) {
-    ;
+#define BITS 16
+void write(inst statement, FILE *out) {
+    char buff[BITS+1];
+    char *bin;
+    int num;
 
-    free(tree);
+    switch (statement.type) {
+        // case LCMD:
+        case ACMD:
+            bin = bits(statement.val, buff, BITS);
+            break;
+        case CCMD:
+            num = binary(statement);
+            bin = bits(num, buff, BITS);
+            break;
+        default:
+            fprintf(stderr, "*** write error: cannot write statement of type `%s`\n",
+                    enumstr(statement.type));
+    }
+
+    fprintf(out, "%s\n", bin);
 }
+
+int binary(inst state) {
+    unsigned _BitInt(16) num = 0b0000000000000000;
+    num ^= dest(state.dest);
+    num <<= DEST_BITS;
+
+    num ^= comp(state.comp);
+    num <<= COMP_BITS;
+
+    num ^= jump(state.jump);
+
+    return (int) num;
+}
+

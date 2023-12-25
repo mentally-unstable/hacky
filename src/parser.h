@@ -19,17 +19,12 @@ inst current = {
 };
 
 
-struct branch {
-    inst* statement;
-    struct branch *next;
-};
-
-
-struct branch *add(struct branch *trunk, inst state);
-void symbol_type(char *str);
-void value(char *str);
 void parse_current(char *str);
-struct branch *parse_lines(char *name);
-void write_free(struct branch *tree, char *out);
+    void symbol_type(char *str);
+    void value(char *str);
+
+void pwrite_lines(char *in, char *out);
+    void write(inst statement, FILE *out);
+    int binary(inst state);
 
 #endif

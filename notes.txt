@@ -1,0 +1,4 @@
+optimize(?)
+
+- code module return strings, no need to call asprintf
+
