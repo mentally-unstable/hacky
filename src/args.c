@@ -14,22 +14,21 @@ args_t *argparse(int argc, char **argv) {
     for (int i = 1; i < argc; i++) {
         if (!strchr(argv[i-1], '-') && !strchr(argv[i], '-'))
             args->in = argv[i];
-        else {
-            if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
-                usage(argv[0]);
-                exit(1);
-            }
 
-            if (!strcmp(argv[i], "-H") || !strcmp(argv[i], "--hex"))
-                args->hex = 1;
-            else
-                args->hex = 0;
-
-            if (!strcmp(argv[i-1], "-o"))
-                args->out = argv[i];
-            else
-                args->out = "a.out";
+        if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
+            usage(argv[0]);
+            exit(1);
         }
+
+        if (!strcmp(argv[i], "-H") || !strcmp(argv[i], "--hex"))
+            args->hex = 1;
+        else
+            args->hex = 0;
+
+        if (!strcmp(argv[i-1], "-o"))
+            args->out = argv[i];
+        else
+            args->out = "a.out";
     }
 
     if (!args->in) {

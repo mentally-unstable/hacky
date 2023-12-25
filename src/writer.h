@@ -4,7 +4,7 @@
 
 #include "def.h"
 
-void write_cmd(cmd_t c, FILE *out);
-int binary(cmd_t c);
+void write_cmd(cmd_t *c, FILE *out);
+int binary(cmd_t *c);
 
 #endif

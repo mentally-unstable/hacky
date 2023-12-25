@@ -31,15 +31,20 @@ void assemble(char *in, char *out) {
 
     char line[10];
     while (fgets(&line[0], 10, fin)) {
+        printf("\n-----------------\n");
         clean(line);
 
         if (skip(line))
             continue;
 
         current.type = cmd_type(line);
-        update_current_cmd(current, line);
+        update_cmd(&current, line);
 
-        write_cmd(current, fout);
+        printf("CURRENT {%s, %i,  %s, %s, %s}\n",
+                enumstr(current.type), current.val,
+                current.dest, current.comp, current.jump);
+
+        write_cmd(&current, fout);
     }
 
     fclose(fin);

@@ -4,11 +4,9 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "code.h"
 #include "parser.h"
 #include "def.h"
 #include "util.h"
-#include "writer.h"
 
 /*
 @2
@@ -26,6 +24,30 @@ v
 bin(2)
 dest("D") ^ comp("M+1") ^ 0
 */
+
+// could be changed(?)
+void update_cmd(cmd_t *current, char *str) {
+    if (current->type == ACMD) {
+        current->val = value(str);
+        return;
+    }
+
+    // if LCMD
+
+    char *strmut = strdup(str);
+
+    if (strchr(str, '='))
+        current->dest = strsep(&strmut, "=");
+
+
+    if (strchr(str, ';')) {
+        current->comp = strsep(&strmut, ";");
+        current->jump = strmut;
+    } else {
+        current->comp = strmut;
+    }
+}
+
 
 int cmd_type(char *str) {
     if (strchr(str, '@'))
@@ -45,35 +67,6 @@ int cmd_type(char *str) {
 
 int value(char *str) {
     char *c = strchr(str, '@');
-
-    if (!c) {
-        fprintf(stderr, "*** parse error `%s` not an ACMD\n", str);
-        exit(1);
-    }
-
     char *val = c+1;
     return atoi(val);
 }
-
-// could be changed(?)
-void update_curent_cmd(cmd_t current, char *str) {
-    if (current.type != CCMD) {
-        value(str);
-        return;
-    }
-
-    char *strmut = strdup(str);
-
-    if (strchr(str, '='))
-        current.dest = strsep(&strmut, "=");
-
-
-    if (strchr(str, ';')) {
-        current.comp = strsep(&strmut, ";");
-        current.jump = strmut;
-    } else {
-        current.comp = strmut;
-    }
-}
-
-
