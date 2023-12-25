@@ -64,7 +64,7 @@ int3 jump(char *mne) {
 
 int7 comp(char *m) {
     if (m == NULL) {
-        fprintf(stderr, "*** encoder error: no comp\n");
+        fprintf(stderr, "*** encoder error: no comp in `%s`\n", m);
         exit(1);
     }
 

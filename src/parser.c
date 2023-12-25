@@ -6,8 +6,9 @@
 
 #include "code.h"
 #include "parser.h"
-#include "enum.h"
+#include "def.h"
 #include "util.h"
+#include "writer.h"
 
 /*
 @2
@@ -26,20 +27,15 @@ bin(2)
 dest("D") ^ comp("M+1") ^ 0
 */
 
-int main(void) {
-    pwrite_lines("../x.asm", "out.hack");
-    return 0;
-}
-
-void symbol_type(char *str) {
+int cmd_type(char *str) {
     if (strchr(str, '@'))
-        current.type = ACMD;
+        return ACMD;
 
     else if (strchr(str, '('))
-        current.type = LCMD;
+        return LCMD;
 
     else if (strchr(str, '=') || strchr(str, ';'))
-        current.type = CCMD;
+        return CCMD;
 
     else {
         fprintf(stderr, "*** parse (lex) error no symbol found for `%s`\n", str);
@@ -47,7 +43,7 @@ void symbol_type(char *str) {
     }
 }
 
-void value(char *str) {
+int value(char *str) {
     char *c = strchr(str, '@');
 
     if (!c) {
@@ -56,10 +52,11 @@ void value(char *str) {
     }
 
     char *val = c+1;
-    current.val = atoi(val);
+    return atoi(val);
 }
 
-void parse_current(char *str) {
+// could be changed(?)
+void update_curent_cmd(cmd_t current, char *str) {
     if (current.type != CCMD) {
         value(str);
         return;
@@ -79,77 +76,4 @@ void parse_current(char *str) {
     }
 }
 
-void pwrite_lines(char *in, char *out) {
-    FILE *fin;
-    if ((fin = fopen(in, "r")) == NULL) {
-        fprintf(stderr, "*** input file error\n");
-        exit(1);
-    }
-
-    FILE *fout;
-    if ((fout = fopen(out, "wa+")) == NULL) {
-        fprintf(stderr, "*** output file error\n");
-        exit(1);
-    }
-
-    char statement[10];
-    while (fgets(&statement[0], 10, fin)) {
-        printf("------------------\n");
-        clean(statement);
-/*        if (skip(statement))
-            continue;*/
-
-        symbol_type(statement);
-        parse_current(statement);
-
-        write(current, fout);
-
-        printf("CMD  {%i(%s), %i, %s, %s, %s}\n",
-                current.type,
-                enumstr(current.type),
-                current.val,
-                current.dest,
-                current.comp,
-                current.jump);
-    }
-
-    fclose(fin);
-    fclose(fout);
-}
-
-#define BITS 16
-void write(inst statement, FILE *out) {
-    char buff[BITS+1];
-    char *bin;
-    int num;
-
-    switch (statement.type) {
-        // case LCMD:
-        case ACMD:
-            bin = bits(statement.val, buff, BITS);
-            break;
-        case CCMD:
-            num = binary(statement);
-            bin = bits(num, buff, BITS);
-            break;
-        default:
-            fprintf(stderr, "*** write error: cannot write statement of type `%s`\n",
-                    enumstr(statement.type));
-    }
-
-    fprintf(out, "%s\n", bin);
-}
-
-int binary(inst state) {
-    unsigned _BitInt(16) num = 0b0000000000000000;
-    num ^= dest(state.dest);
-    num <<= DEST_BITS;
-
-    num ^= comp(state.comp);
-    num <<= COMP_BITS;
-
-    num ^= jump(state.jump);
-
-    return (int) num;
-}
 

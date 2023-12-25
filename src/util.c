@@ -1,8 +1,10 @@
 // hello
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "util.h"
-#include "enum.h"
+#include "def.h"
 
 char *enumstr(int type) {
     switch (type) {
@@ -16,6 +18,12 @@ char *enumstr(int type) {
             fprintf(stderr, "*** util error: unrecognized type `%i`\n", type);
             exit(1);
     }
+}
+
+int skip(char *state) {
+    if ((*(state) == '#') || !strcmp(state, ""))
+        return 1;
+    return 0;
 }
 
 /* stackoverflow code lol, all slightly edited */
@@ -38,12 +46,6 @@ char *bits(unsigned int val, char *buff, int sz) {
     char *pbuff = buff;
 
     if (sz < 1) return NULL;
-
-    if (val == 0) {
-        *pbuff++ = '0';
-        *pbuff = '\0';
-        return buff;
-    }
 
     pbuff += sz;
     *pbuff-- = '\0';
