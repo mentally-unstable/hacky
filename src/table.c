@@ -8,8 +8,8 @@
 entry_t *init_table() {
     entry_t *new = (entry_t *) malloc(sizeof(entry_t));
 
-    char *defaults1[6] = {
-        "LCL", "ARG", "THIS", "THAT",
+    char *defaults1[7] = {
+        "SP", "LCL", "ARG", "THIS", "THAT",
         "SCREEN", "KBD",
     };
 
@@ -19,22 +19,26 @@ entry_t *init_table() {
         "R12", "R13", "R14", "R15",
     };
 
-    for (int i = 0; i <= 16; i++) {
-        if (i <= 6)
+    for (int i = 0; i < 16; i++) {
+        if (i < 7)
             add_entry(new, defaults1[i], i);
         add_entry(new, defaults2[i], i);
     }
 
-    return new;
+    return new->next;
 }
 
 int exists(entry_t *entry, char *name) {
+    fprintf(stdout, "\t<t> checking if `%s` exists\n", name);
     entry_t *p = entry;
     for (; p != NULL; p = p->next) {
-        if (!strcmp(p->name, name))
+        if (!strcmp(p->name, name)) {
+            fprintf(stdout, "\t\t<t> found it\n");
             return 1;
+        }
     }
 
+    fprintf(stdout, "\t\t<t> didn't find it\n");
     return 0;
 }
 

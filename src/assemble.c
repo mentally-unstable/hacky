@@ -15,44 +15,53 @@
 
 void assemble(FILE *fin, FILE *fout) {
     entry_t *table = init_table();
-    cmd_t current = {
-        .type = 0,
-        .val = 0,
-        .dest = NULL,
-        .comp = NULL,
-        .jump = NULL,
-    };
 
     char line[10];
     char *label;
 
     // first stage
     user_symbols(table, &line[0], fin);
+    fprintf(stdout, "<a> built user symbol table\n");
+
+    int ram = SYS_RAM+1;
+    int i = -1; // assembler index (in file)
 
     // second stage
-    int ram = SYS_RAM+1;
     while (fgets(&line[0], 10, fin)) {
+        cmd_t current = {
+            .type = 0,
+            .val = 0,
+            .dest = NULL,
+            .comp = NULL,
+            .jump = NULL,
+        };
+
+        i++;
         clean(line);
 
-        printf("\n-----------------\n");
-        if (skip(line))
+        if (skip(line)) {
+            fprintf(stdout, "<a> [%i] skipping line\n", i);
             continue;
+        }
 
         current.type = cmd_type(line);
 
-        if (current.type == LCMD)
+        if (current.type == LCMD) {
+            fprintf(stdout, "<a> [%i] skipping label declaration: %s\n", i, line);
             continue;
+        }
 
         update_state(table, &current, line);
 
         if (current.type == VARR) {
+            fprintf(stdout, "<a> [%i] added variable %s to table at address %i\n", i, line, ram);
             label = label_of(line, VARR);
             add_entry(table, label, ram);
             ram++;
             continue;
         }
 
-        printf("CURRENT {%s, %i,  %s, %s, %s}\n",
+        fprintf(stdout, "<a> status: {%s, %i,  %s, %s, %s}\n",
                 enumstr(current.type), current.val,
                 current.dest, current.comp, current.jump);
 

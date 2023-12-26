@@ -18,4 +18,6 @@ typedef struct {
     char *jump;
 } cmd_t;
 
+#define BITS 16
+
 #endif

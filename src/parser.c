@@ -27,6 +27,7 @@ dest("D") ^ comp("M+1") ^ 0
 
 void update_state(entry_t *table, cmd_t *current, char *str) {
     if (current->type == ACMD) {
+        fprintf(stdout, "\t<p> reading value of ACMD\n");
         current->val = value(str);
         return;
     }
@@ -38,10 +39,13 @@ void update_state(entry_t *table, cmd_t *current, char *str) {
          * if ((current->val = addressof(table, label)))
          *     ;
          */
-        if (exists(table, label))
+        if (exists(table, label)) {
+            fprintf(stdout, "\t<p> reading ROM address (file index) of label\n");
             current->val = addressof(table, label);
-        else
+        } else {
+            fprintf(stdout, "\t<p> set `%s` as variable declaration\n", str);
             current->type = VARR;
+        }
 
         return;
     }
@@ -67,10 +71,10 @@ void parse_statement(cmd_t *current, char *str) {
 int cmd_type(char *str) {
     char *p;
     if ((p = strchr(str, '@'))) {
-        if (!isdigit(*(p+1)))
-            return LREF;
-        else
+        if (isdigit(*(p+1)))
             return ACMD;
+        else
+            return LREF;
     }
 
     else if (strchr(str, '('))

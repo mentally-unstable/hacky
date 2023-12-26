@@ -15,23 +15,26 @@
 #include <string.h>
 #include "code.h"
 
+int uses_memory(char *m) {
+    if (strchr(m, 'M'))
+        return 1;
+    return 0;
+}
+
 int3 dest(char *mne) {
-    unsigned _BitInt(3) dest = 0;
+    unsigned _BitInt(3) dest = 0b000;
 
     if (mne == NULL)
         return dest;
 
-    char *c = mne;
-    for (int i = 0; i < 3; ++i) {
-        if (*(c+i) == 'M')
-            dest |= 1;
+    if (strchr(mne, 'M'))
+        dest |= 0b001;
 
-        if (*(c+i) == 'D')
-            dest |= (1 << 1);
+    if (strchr(mne, 'D'))
+        dest |= 0b010;
 
-        if (*(c+i) == 'A')
-            dest |= (1 << 2);
-    }
+    if (strchr(mne, 'A'))
+        dest |= 0b100;
 
     return dest;
 }
@@ -62,17 +65,13 @@ int3 jump(char *mne) {
     return jump;
 }
 
-int7 comp(char *m) {
+int6 comp(char *m) {
     if (m == NULL) {
         fprintf(stderr, "*** encoder error: no comp in `%s`\n", m);
         exit(1);
     }
 
-    int7 a = 0b0000000;
-    if (strchr(m, 'D'))
-        a = 0b1000000;
-
-    unsigned _BitInt(6) c;
+    unsigned _BitInt(6) c = 0b000000;
 
     if (!strcmp(m, "0"))
         c = 0b101010;
@@ -111,8 +110,8 @@ int7 comp(char *m) {
     else if (!strcmp(m, "D|A") || !strcmp(m, "D|M"))
         c = 0b010101;
     else {
-        return 0b0010000; // error
+        fprintf(stdout, "*** encoder error: unrecongized comp mnemonic `%s`\n", m);
     }
 
-    return (int7) a ^ c;
+    return c;
 }

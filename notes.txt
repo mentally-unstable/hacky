@@ -2,3 +2,6 @@ optimize(?)
 
 - code module return strings, no need to call asprintf
 
+other
+- verbose mode 
+    - intro: p = parser, w = writer, a = assembler, c = [en]coder

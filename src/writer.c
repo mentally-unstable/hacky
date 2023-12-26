@@ -5,8 +5,6 @@
 #include "util.h"
 #include "code.h"
 
-#define BITS 16
-
 void write_cmd(cmd_t *cmd, FILE *out) {
     char buff[BITS+1];
     char *bin = NULL;
@@ -16,11 +14,11 @@ void write_cmd(cmd_t *cmd, FILE *out) {
         case LCMD:
         case LREF:
         case ACMD:
-            bin = bits(cmd->val, buff, BITS);
+            bin = bits(cmd->val, &buff[0]);
             break;
         case CCMD:
             num = binary(cmd);
-            bin = bits(num, buff, BITS);
+            bin = bits(num, &buff[0]);
             break;
         default:
             fprintf(stderr, "*** write error: cannot write statement of type `%s`\n",
@@ -31,13 +29,18 @@ void write_cmd(cmd_t *cmd, FILE *out) {
 }
 
 int binary(cmd_t *cmd) {
-    unsigned _BitInt(16) num = 0b0000000000000111;
-
-    num <<= DEST_BITS;
-    num ^= (dest(cmd->dest));
+    unsigned _BitInt(16) num;
+    
+    if (uses_memory(cmd->comp))
+        num = 0b0000000000001111;
+    else
+        num = 0b0000000000001110;
 
     num <<= COMP_BITS;
     num ^= (comp(cmd->comp));
+
+    num <<= DEST_BITS;
+    num ^= (dest(cmd->dest));
 
     num <<= JUMP_BITS;
     num ^= (jump(cmd->jump));
