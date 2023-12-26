@@ -11,6 +11,8 @@
 args_t *argparse(int argc, char **argv) {
     args_t *args = (args_t *) malloc(sizeof(args_t));
 
+    args->out = "a.out";
+
     for (int i = 1; i < argc; i++) {
         if (!strchr(argv[i-1], '-') && !strchr(argv[i], '-'))
             args->in = argv[i];
@@ -27,8 +29,6 @@ args_t *argparse(int argc, char **argv) {
 
         if (!strcmp(argv[i-1], "-o"))
             args->out = argv[i];
-        else
-            args->out = "a.out";
     }
 
     if (!args->in) {

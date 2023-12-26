@@ -7,6 +7,7 @@
 #include "parser.h"
 #include "def.h"
 #include "util.h"
+#include "table.h"
 
 /*
 @2
@@ -14,7 +15,6 @@ D=M+1
 
 v
 v
-
 ACMD, 2
 CCMD, "D", "M+1", null
 
@@ -25,15 +25,31 @@ bin(2)
 dest("D") ^ comp("M+1") ^ 0
 */
 
-// could be changed(?)
-void update_cmd(cmd_t *current, char *str) {
+void update_state(entry_t *table, cmd_t *current, char *str) {
     if (current->type == ACMD) {
         current->val = value(str);
         return;
     }
 
-    // if LCMD
+    char *label;
+    if (current->type == LREF) {
+        label = label_of(str, LREF);
+        /*
+         * if ((current->val = addressof(table, label)))
+         *     ;
+         */
+        if (exists(table, label))
+            current->val = addressof(table, label);
+        else
+            current->type = VARR;
 
+        return;
+    }
+
+    parse_statement(current, str);
+}
+
+void parse_statement(cmd_t *current, char *str) {
     char *strmut = strdup(str);
 
     if (strchr(str, '='))
@@ -48,10 +64,14 @@ void update_cmd(cmd_t *current, char *str) {
     }
 }
 
-
 int cmd_type(char *str) {
-    if (strchr(str, '@'))
-        return ACMD;
+    char *p;
+    if ((p = strchr(str, '@'))) {
+        if (!isdigit(*(p+1)))
+            return LREF;
+        else
+            return ACMD;
+    }
 
     else if (strchr(str, '('))
         return LCMD;
@@ -65,8 +85,25 @@ int cmd_type(char *str) {
     }
 }
 
+// for literals
 int value(char *str) {
     char *c = strchr(str, '@');
     char *val = c+1;
     return atoi(val);
+}
+
+// for symbols
+char *label_of(char *str, int type) {
+    char *res = strdup(str);
+
+    if (type == LCMD) {
+        res = strsep(&str, "(");
+        res = strsep(&str, ")");
+
+    } else if (type == LREF || type == VARR) {
+        res = strchr(str, '@');
+        res += 1;
+    }
+
+    return res;
 }

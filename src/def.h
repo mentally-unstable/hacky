@@ -5,6 +5,8 @@
 enum {
     ACMD = 1,
     LCMD,
+    LREF,
+    VARR, // internal compiler flag
     CCMD,
 };
 

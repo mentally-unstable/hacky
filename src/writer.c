@@ -1,9 +1,7 @@
 // hello
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "writer.h"
-#include "def.h"
 #include "util.h"
 #include "code.h"
 
@@ -15,7 +13,8 @@ void write_cmd(cmd_t *cmd, FILE *out) {
     int num;
 
     switch (cmd->type) {
-        // case LCMD:
+        case LCMD:
+        case LREF:
         case ACMD:
             bin = bits(cmd->val, buff, BITS);
             break;
