@@ -4,13 +4,13 @@
 #include <stdio.h>
 
 #include "table.h"
+#include "info.h"
 
 entry_t *init_table() {
     entry_t *new = (entry_t *) malloc(sizeof(entry_t));
 
-    char *defaults1[7] = {
+    char *defaults1[5] = {
         "SP", "LCL", "ARG", "THIS", "THAT",
-        "SCREEN", "KBD",
     };
 
     char *defaults2[16] = {
@@ -20,36 +20,49 @@ entry_t *init_table() {
     };
 
     for (int i = 0; i < 16; i++) {
-        if (i < 7)
+        if (i < 5)
             add_entry(new, defaults1[i], i);
         add_entry(new, defaults2[i], i);
     }
 
-    return new->next;
+    add_entry(new, "SCREEN", 16384);
+    add_entry(new, "KBD", 24576);
+
+    entry_t *next = new->next;
+    free(new);
+    return next;
 }
 
 int exists(entry_t *entry, char *name) {
-    fprintf(stdout, "\t<t> checking if `%s` exists\n", name);
+    info("\t<t> checking if `%s` exists\n", name);
+
     entry_t *p = entry;
     for (; p != NULL; p = p->next) {
         if (!strcmp(p->name, name)) {
-            fprintf(stdout, "\t\t<t> found it\n");
+            info("\t\t<t> found it\n");
             return 1;
         }
     }
 
-    fprintf(stdout, "\t\t<t> didn't find it\n");
+    info("\t\t<t> didn't find it\n");
     return 0;
 }
 
-void add_entry(entry_t *table, char *s, int a) {
+void add_entry(entry_t *table, const char *s, int a) {
     entry_t *new = (entry_t *) malloc(sizeof(entry_t));
 
     new->name = s;
     new->addr = a;
     new->next = NULL;
 
-    table->next = new;
+    entry_t *end = seek_end(table);
+    end->next = new;
+}
+
+entry_t *seek_end(entry_t *head) {
+    entry_t *p = head;
+    for (; p->next != NULL; p = p->next) ;
+    return p;
 }
 
 int addressof(entry_t *table, char *name) {
@@ -60,4 +73,20 @@ int addressof(entry_t *table, char *name) {
     }
 
     return 0; // should never occur
+}
+
+void free_table(entry_t *head) {
+    for (; head != NULL; head = head->next) {
+        free(head);
+    }
+}
+
+void print_table(entry_t *head) {
+    info ("\t\t<t> table {\n");
+    entry_t *p = head;
+    for (; p != NULL; p = p->next) {
+        info("\t\t\t%s: %i [%s]\n",
+                p->name, p->addr, p->next == NULL ? "no" : "yes");
+    }
+    info("\t\t}\n");
 }

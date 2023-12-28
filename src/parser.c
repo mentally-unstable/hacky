@@ -8,6 +8,7 @@
 #include "def.h"
 #include "util.h"
 #include "table.h"
+#include "info.h"
 
 /*
 @2
@@ -27,7 +28,7 @@ dest("D") ^ comp("M+1") ^ 0
 
 void update_state(entry_t *table, cmd_t *current, char *str) {
     if (current->type == ACMD) {
-        fprintf(stdout, "\t<p> reading value of ACMD\n");
+        info("\t<p> reading value of ACMD\n");
         current->val = value(str);
         return;
     }
@@ -40,10 +41,10 @@ void update_state(entry_t *table, cmd_t *current, char *str) {
          *     ;
          */
         if (exists(table, label)) {
-            fprintf(stdout, "\t<p> reading ROM address (file index) of label\n");
+            info("\t<p> reading ROM address (file index) of label\n");
             current->val = addressof(table, label);
         } else {
-            fprintf(stdout, "\t<p> set `%s` as variable declaration\n", str);
+            info("\t<p> set `%s` as variable declaration\n", str);
             current->type = VARR;
         }
 
@@ -101,12 +102,14 @@ char *label_of(char *str, int type) {
     char *res = strdup(str);
 
     if (type == LCMD) {
-        res = strsep(&str, "(");
-        res = strsep(&str, ")");
+        res += 1;
+        res = strsep(&res, ")");
+        info("<p> parsed label of `%s`: %s\n", str, res);
 
     } else if (type == LREF || type == VARR) {
         res = strchr(str, '@');
         res += 1;
+        info("<p> parsed symbol of `%s`: %s\n", str, res);
     }
 
     return res;
