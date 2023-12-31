@@ -4,6 +4,7 @@
 #include "writer.h"
 #include "util.h"
 #include "code.h"
+#include "args.h"
 
 void write_cmd(cmd_t *cmd, FILE *out) {
     char buff[BITS+1];
@@ -14,11 +15,11 @@ void write_cmd(cmd_t *cmd, FILE *out) {
         case LCMD:
         case LREF:
         case ACMD:
-            bin = bits(cmd->val, &buff[0]);
+            bin = args.hex ? hex(cmd->val) : bits(cmd->val, &buff[0]);
             break;
         case CCMD:
             num = binary(cmd);
-            bin = bits(num, &buff[0]);
+            bin = args.hex ? hex(num) : bits(num, &buff[0]);
             break;
         default:
             fprintf(stderr, "*** write error: cannot write statement of type `%s`\n",
@@ -30,7 +31,7 @@ void write_cmd(cmd_t *cmd, FILE *out) {
 
 int binary(cmd_t *cmd) {
     unsigned _BitInt(16) num;
-    
+
     if (uses_memory(cmd->comp))
         num = 0b0000000000001111;
     else
@@ -46,4 +47,10 @@ int binary(cmd_t *cmd) {
     num ^= (jump(cmd->jump));
 
     return (int) num;
+}
+
+char *hex(int num) {
+    char *ret;
+    asprintf(&ret, "%04x", num);
+    return ret;
 }

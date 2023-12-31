@@ -36,10 +36,7 @@ void update_state(entry_t *table, cmd_t *current, char *str) {
     char *label;
     if (current->type == LREF) {
         label = label_of(str, LREF);
-        /*
-         * if ((current->val = addressof(table, label)))
-         *     ;
-         */
+
         if (exists(table, label)) {
             info("\t<p> reading ROM address (file index) of label\n");
             current->val = addressof(table, label);

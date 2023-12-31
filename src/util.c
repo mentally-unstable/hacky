@@ -23,15 +23,31 @@ char *enumstr(int type) {
 }
 
 int skip(char *state) {
-    if ((*(state) == '#') || !strcmp(state, ""))
+    if (!strcmp(state, ""))
         return 1;
+
     return 0;
 }
 
 void clean(char *s) {
-    char* d = s;
+    char *d = s;
     do {
         while ((*d == '\n') || (*d == ' ')) {
+            ++d;
+        }
+
+        if (*d == '/') {
+            if (*(d++) == '/') {
+                --d;
+                *d = '\0';
+
+            } else {
+                fprintf(stderr, "*** util (parse) error: unknown statement `%s`\n", s);
+                exit(1);
+            }
+        }
+
+        while (*d == ' ') {
             ++d;
         }
     } while ((*s++ = *d++));

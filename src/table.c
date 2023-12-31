@@ -82,7 +82,7 @@ void free_table(entry_t *head) {
 }
 
 void print_table(entry_t *head) {
-    info ("\t\t<t> table {\n");
+    info("\t\t<t> table {\n");
     entry_t *p = head;
     for (; p != NULL; p = p->next) {
         info("\t\t\t%s: %i [%s]\n",

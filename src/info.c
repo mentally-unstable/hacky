@@ -1,6 +1,7 @@
 // hello
 #include <stdio.h>
 #include <stdarg.h>
+#include <unistd.h>
 
 #include "def.h"
 #include "info.h"
@@ -14,4 +15,6 @@ void info(const char *fmt, ...) {
     va_start(vargs, fmt);
     vfprintf(stdout, fmt, vargs);
     va_end(vargs);
+
+    fflush(stdout);
 }

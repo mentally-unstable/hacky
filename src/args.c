@@ -16,31 +16,44 @@ args_t args = {
 
 void argparse(int argc, char **argv) {
     char msg[64] = "";
-    args.out = "a.out";
+    args.out = "out.hack";
 
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i-1], "-o") && !strchr(argv[i], '-'))
-            args.in = argv[i];
-
         if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
             usage(argv[0]);
             exit(1);
         }
 
-        if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--verbose")) {
-            strcat(msg, "<ap> enabled verbose output\n");
-            args.info = 1;
-        } else
-            args.info = 0;
 
-        if (!strcmp(argv[i], "-H") || !strcmp(argv[i], "--hex")) {
+        else if (strcmp(argv[i-1], "-o") && !strchr(argv[i], '-')) {
+            args.in = argv[i];
+            continue;
+        }
+
+        else if (!strcmp(argv[i], "-v")) {
+            strcat(msg, "<ap> enabled debug output\n");
+            args.info = 1;
+            continue;
+        }
+
+        else if (!strcmp(argv[i], "-H")) {
             strcat(msg, "<ap> output in hex format\n");
             args.hex = 1;
-        } else
-            args.hex = 0;
+            continue;
+        }
 
-        if (!strcmp(argv[i-1], "-o"))
+        else if (!strcmp(argv[i], "-o")) {
+            continue;
+        }
+
+        else if (!strcmp(argv[i-1], "-o")) {
             args.out = argv[i];
+            continue;
+        }
+
+        else {
+            fprintf(stderr, "*** args error: unkown argument `%s`\n", argv[i]);
+        }
     }
 
     if (!args.in) {
@@ -57,8 +70,8 @@ void usage(char *cmd) {
 "Usage:\n$ %s file [options]\n\
 options:\n\
 \t-o <file>\toutput file name\n\
-\t-v|--verbose\tverbose output (for debugging)\n\
-\t-H|--hex\thexadecimal output\n\
+\t-v\t\tverbose output (for debugging)\n\
+\t-H\t\thexadecimal output\n\
 \t-h|--help\tdisplays this message\n", cmd);
 }
 

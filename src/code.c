@@ -110,7 +110,7 @@ int6 comp(char *m) {
     else if (!strcmp(m, "D|A") || !strcmp(m, "D|M"))
         c = 0b010101;
     else {
-        fprintf(stdout, "*** encoder error: unrecongized comp mnemonic `%s`\n", m);
+        fprintf(stdout, "*** encoder error: unrecognized comp mnemonic `%s`\n", m);
     }
 
     return c;
