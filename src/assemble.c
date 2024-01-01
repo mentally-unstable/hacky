@@ -7,13 +7,12 @@
 #include "assemble.h"
 #include "info.h"
 
-#define SYS_RAM 16
+#define SYS_RAM 15
 #define MAXCHARS 80
 
 void assemble(FILE *fin, FILE *fout) {
     entry_t *table = init_table();
-
-    char line[MAXCHARS];
+char line[MAXCHARS];
     char *label;
 
     // first stage
@@ -52,12 +51,14 @@ void assemble(FILE *fin, FILE *fout) {
 
         update_state(table, &current, line);
 
-        if (current.type == VARR) {
-            info("<a> [%i] added variable %s to table at address %i\n", i, line, ram);
-            label = label_of(line, VARR);
+        if (current.type == CONST) {
+            info("<a> [%i] added constant %s to table at address %i\n", i, line, ram);
+            label = label_of(line, CONST);
             add_entry(table, label, ram);
+
+            current.val = ram;
+            current.type = LREF; // aaaaa
             ram++;
-            continue;
         }
 
         info("<a> status: {%s, %i,  %s, %s, %s}\n",

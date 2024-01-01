@@ -35,6 +35,7 @@ entry_t *init_table() {
 
 int exists(entry_t *entry, char *name) {
     info("\t<t> checking if `%s` exists\n", name);
+    print_table(entry);
 
     entry_t *p = entry;
     for (; p != NULL; p = p->next) {

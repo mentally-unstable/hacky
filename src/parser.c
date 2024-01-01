@@ -42,7 +42,7 @@ void update_state(entry_t *table, cmd_t *current, char *str) {
             current->val = addressof(table, label);
         } else {
             info("\t<p> set `%s` as variable declaration\n", str);
-            current->type = VARR;
+            current->type = CONST;
         }
 
         return;
@@ -103,8 +103,8 @@ char *label_of(char *str, int type) {
         res = strsep(&res, ")");
         info("<p> parsed label of `%s`: %s\n", str, res);
 
-    } else if (type == LREF || type == VARR) {
-        res = strchr(str, '@');
+    } else if (type == LREF || type == CONST) {
+        res = strsep(&res, "@");
         res += 1;
         info("<p> parsed symbol of `%s`: %s\n", str, res);
     }
