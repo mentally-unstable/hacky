@@ -12,7 +12,7 @@
 
 void assemble(FILE *fin, FILE *fout) {
     entry_t *table = init_table();
-char line[MAXCHARS];
+    char line[MAXCHARS];
     char *label;
 
     // first stage
@@ -93,3 +93,4 @@ void user_symbols(entry_t *head, char *line, FILE *fin) {
 
     rewind(fin);
 }
+

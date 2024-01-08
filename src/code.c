@@ -71,47 +71,48 @@ int6 comp(char *m) {
         exit(1);
     }
 
-    unsigned _BitInt(6) c = 0b000000;
-
     if (!strcmp(m, "0"))
-        c = 0b101010;
+        return 0b101010;
     else if (!strcmp(m, "1"))
-        c = 0b111111;
+        return 0b111111;
     else if (!strcmp(m, "-1"))
-        c = 0b111010;
+        return 0b111010;
     else if (!strcmp(m, "A") || !strcmp(m, "M"))
-        c = 0b110000;
+        return 0b110000;
     else if (!strcmp(m, "D"))
-        c = 0b001100;
+        return 0b001100;
     else if (!strcmp(m, "!A") || !strcmp(m, "!M"))
-        c = 0b110001;
+        return 0b110001;
     else if (!strcmp(m, "!D"))
-        c = 0b001101;
+        return 0b001101;
     else if (!strcmp(m, "-A") || !strcmp(m, "-M"))
-        c = 0b110011;
+        return 0b110011;
     else if (!strcmp(m, "-D"))
-        c = 0b001111;
+        return 0b001111;
     else if (!strcmp(m, "D+1"))
-        c = 0b011111;
+        return 0b011111;
     else if (!strcmp(m, "A+1") || !strcmp(m, "M+1"))
-        c = 0b110111;
+        return 0b110111;
     else if (!strcmp(m, "D-1"))
-        c = 0b001110;
+        return 0b001110;
     else if (!strcmp(m, "A-1") || !strcmp(m, "M-1"))
-        c = 0b110010;
+        return 0b110010;
     else if (!strcmp(m, "D+A") || !strcmp(m, "D+M"))
-        c = 0b000010;
+        return 0b000010;
     else if (!strcmp(m, "D-A") || !strcmp(m, "D-M"))
-        c = 0b010011;
+        return 0b010011;
+/*
+    else if (!strcmp(m, "A+D") || !strcmp(m, "M+D"))
+        return
+*/
     else if (!strcmp(m, "A-D") || !strcmp(m, "M-D"))
-        c = 0b000111;
+        return 0b000111;
     else if (!strcmp(m, "D&A") || !strcmp(m, "D&M"))
-        c = 0b000000;
+        return 0b000000;
     else if (!strcmp(m, "D|A") || !strcmp(m, "D|M"))
-        c = 0b010101;
+        return 0b010101;
     else {
         fprintf(stdout, "*** encoder error: unrecognized comp mnemonic `%s`\n", m);
+        exit(1);
     }
-
-    return c;
 }
