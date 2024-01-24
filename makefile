@@ -2,27 +2,27 @@
 ### https://www.cs.swarthmore.edu/~newhall/unixhelp/howto_makefiles.html ###
 
 CC := gcc
-CFLAGS := -g -Wall -Wextra
-SRCS := src/*.c
-OBJS := $(SRCS:.c=.o)
-OBJS =  $(SRCS:src/=obj/)
+CFLAGS := -Wall -Wextra -g -Os
 MAIN := hacky
 
-.PHONY: depend clean
+VPATH := src:src/*.c
+
+OBJ_DIR := obj
+_OBJS := main.o parser.o assemble.o writer.o args.o code.o table.o util.o
+OBJS := $(patsubst %, $(OBJ_DIR)/%, $(_OBJS) )
+
+.PHONY:	depend clean
 
 all: $(MAIN)
-	@echo  hacky compiled \(\:
+	@echo \`$(MAIN)\' hath compiled
 
 $(MAIN): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(MAIN)
 
-.c.o:
-	$(CC) $(CFLAGS) -c $<  -o obj/$@
+$(OBJ_DIR)/%.o : %.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
+
 
 clean:
-	$(RM) $(MAIN) obj/*.o *~
+	$(RM) $(OBJ_DIR)/*.o *~
 
-depend: $(SRCS)
-	makedepend $^
-
-# DO NOT DELETE
