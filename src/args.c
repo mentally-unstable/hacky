@@ -3,19 +3,15 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "info.h"
-
 #define LOCAL
 #include "args.h"
 args_t args = {
     .out = NULL,
     .in = NULL,
     .hex = 0,
-    .info = 0,
 };
 
 void argparse(int argc, char **argv) {
-    char msg[64] = "";
     args.out = "out.hack";
 
     for (int i = 1; i < argc; i++) {
@@ -30,14 +26,7 @@ void argparse(int argc, char **argv) {
             continue;
         }
 
-        else if (!strcmp(argv[i], "-v")) {
-            strcat(msg, "<ap> enabled debug output\n");
-            args.info = 1;
-            continue;
-        }
-
         else if (!strcmp(argv[i], "-H")) {
-            strcat(msg, "<ap> output in hex format\n");
             args.hex = 1;
             continue;
         }
@@ -52,7 +41,7 @@ void argparse(int argc, char **argv) {
         }
 
         else {
-            fprintf(stderr, "*** args error: unkown argument `%s`\n", argv[i]);
+            fprintf(stderr, "*** args error: unknown argument `%s`\n", argv[i]);
         }
     }
 
@@ -61,8 +50,6 @@ void argparse(int argc, char **argv) {
         usage(argv[0]);
         exit(1);
     }
-
-    info(msg);
 }
 
 void usage(char *cmd) {

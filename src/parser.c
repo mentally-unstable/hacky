@@ -7,8 +7,6 @@
 #include "parser.h"
 #include "def.h"
 #include "util.h"
-#include "table.h"
-#include "info.h"
 
 /*
 @2
@@ -16,6 +14,7 @@ D=M+1
 
 v
 v
+
 ACMD, 2
 CCMD, "D", "M+1", null
 
@@ -26,32 +25,7 @@ bin(2)
 dest("D") ^ comp("M+1") ^ 0
 */
 
-void update_state(entry_t *table, cmd_t *current, char *str) {
-    if (current->type == ACMD) {
-        info("\t<p> reading value of ACMD\n");
-        current->val = value(str);
-        return;
-    }
-
-    char *label;
-    if (current->type == LREF) {
-        label = label_of(str, LREF);
-
-        if (exists(table, label)) {
-            info("\t<p> reading ROM address (file index) of label\n");
-            current->val = addressof(table, label);
-        } else {
-            info("\t<p> set `%s` as variable declaration\n", str);
-            current->type = CONST;
-        }
-
-        return;
-    }
-
-    parse_statement(current, str);
-}
-
-void parse_statement(cmd_t *current, char *str) {
+void split_line(cmd_t *current, char *str) {
     char *strmut = strdup(str);
 
     if (strchr(str, '='))
@@ -101,13 +75,52 @@ char *label_of(char *str, int type) {
     if (type == LCMD) {
         res += 1;
         res = strsep(&res, ")");
-        info("<p> parsed label of `%s`: %s\n", str, res);
 
     } else if (type == LREF || type == CONST) {
         res = strsep(&res, "@");
         res += 1;
-        info("<p> parsed symbol of `%s`: %s\n", str, res);
     }
 
     return res;
+}
+
+int skip(char *state) {
+    if (!strcmp(state, ""))
+        return 1;
+
+    return 0;
+}
+
+void clean(char *s) {
+    char *d = s;
+    do {
+        while (*d == '\n') {
+            ++d;
+        }
+
+        while (*d == ' ') {
+            ++d;
+        }
+
+        if (!clean_comment(d))
+        {
+            fprintf(stderr, "*** parser error: unknown statement `%s`\n\
+\t(hint: did you mean to comment?)\n", s);
+            exit(1);
+        }
+    } while ((*s++ = *d++));
+}
+
+int clean_comment(char *d) {
+    if (*d == '/') {
+        if (*(d++) == '/') {
+            --d;
+            *d = '\0';
+            return 1;
+        }
+
+        return 0;
+    }
+
+    return 1;
 }

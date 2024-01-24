@@ -4,3 +4,5 @@ hacky
 *.asm
 *.hack
 a.out
+test/*
+obj/*

@@ -54,3 +54,18 @@ char *hex(int num) {
     asprintf(&ret, "%04x", num);
     return ret;
 }
+
+char *bits(unsigned int val, char *buff) {
+    char *pbuff = buff;
+
+    pbuff += BITS;
+    *pbuff-- = '\0';
+
+    for (int i = 0; i < BITS; i++) {
+        *pbuff-- = ((val & 1) == 1) ? '1' : '0';
+
+        val >>= 1;
+    }
+
+    return pbuff+1;
+}

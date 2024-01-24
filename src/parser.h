@@ -5,10 +5,12 @@
 #include "def.h"
 #include "table.h"
 
+void split_line(cmd_t *cur, char *str);
 int cmd_type(char *str);
 int value(char *str);
 char *label_of(char *str, int type);
-void parse_statement(cmd_t *cur, char *str);
-void update_state(entry_t *table, cmd_t *current, char *str);
+int skip(char *state);
+void clean(char *s);
+int clean_comment(char *p);
 
 #endif

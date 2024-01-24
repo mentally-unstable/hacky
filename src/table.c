@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 #include "table.h"
-#include "info.h"
 
 entry_t *init_table() {
     entry_t *new = (entry_t *) malloc(sizeof(entry_t));
@@ -34,18 +33,13 @@ entry_t *init_table() {
 }
 
 int exists(entry_t *entry, char *name) {
-    info("\t<t> checking if `%s` exists\n", name);
-    print_table(entry);
-
     entry_t *p = entry;
     for (; p != NULL; p = p->next) {
         if (!strcmp(p->name, name)) {
-            info("\t\t<t> found it\n");
             return 1;
         }
     }
 
-    info("\t\t<t> didn't find it\n");
     return 0;
 }
 
@@ -80,14 +74,4 @@ void free_table(entry_t *head) {
     for (; head != NULL; head = head->next) {
         free(head);
     }
-}
-
-void print_table(entry_t *head) {
-    info("\t\t<t> table {\n");
-    entry_t *p = head;
-    for (; p != NULL; p = p->next) {
-        info("\t\t\t%s: %i [%s]\n",
-                p->name, p->addr, p->next == NULL ? "no" : "yes");
-    }
-    info("\t\t}\n");
 }

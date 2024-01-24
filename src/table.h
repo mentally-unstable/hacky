@@ -15,6 +15,5 @@ void add_entry(entry_t *table, const char *s, int a);
 int addressof(entry_t *table, char *name);
 entry_t *seek_end(entry_t *head);
 void free_table(entry_t *head);
-void print_table(entry_t *head);
 
 #endif
