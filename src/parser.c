@@ -88,6 +88,16 @@ int skip(char *state) {
     if (!strcmp(state, ""))
         return 1;
 
+    if (*state == '(')
+        return 1;
+
+    return 0;
+}
+
+int skip_empty(char *state) {
+    if (!strcmp(state, ""))
+        return 1;
+
     return 0;
 }
 
@@ -122,5 +132,6 @@ int clean_comment(char *d) {
         return 0;
     }
 
+    // redundant but for compiler satisfaction
     return 1;
 }

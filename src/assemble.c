@@ -48,7 +48,7 @@ void user_symbols(entry_t *head, char *line, FILE *fin) {
     while (fgets(line, MAXCHARS, fin)) {
         clean(line);
 
-        if (skip(line))
+        if (skip_empty(line))
             continue;
 
         if (cmd_type(line) == LCMD) {

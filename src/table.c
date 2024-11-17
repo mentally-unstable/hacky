@@ -8,8 +8,10 @@
 entry_t *init_table() {
     entry_t *new = (entry_t *) malloc(sizeof(entry_t));
 
-    char *defaults1[5] = {
+    char *defaults1[13] = {
         "SP", "LCL", "ARG", "THIS", "THAT",
+        "T1", "T2", "T3", "T4",
+        "T5", "T6", "T7", "T8",
     };
 
     char *defaults2[16] = {
@@ -19,8 +21,9 @@ entry_t *init_table() {
     };
 
     for (int i = 0; i < 16; i++) {
-        if (i < 5)
+        if (i < 13)
             add_entry(new, defaults1[i], i);
+
         add_entry(new, defaults2[i], i);
     }
 

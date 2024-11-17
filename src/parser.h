@@ -10,6 +10,7 @@ int cmd_type(char *str);
 int value(char *str);
 char *label_of(char *str, int type);
 int skip(char *state);
+int skip_empty(char *state);
 void clean(char *s);
 int clean_comment(char *p);
 

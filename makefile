@@ -2,8 +2,8 @@
 ### https://www.cs.swarthmore.edu/~newhall/unixhelp/howto_makefiles.html ###
 
 CC := gcc
-CFLAGS := -Wall -Wextra -g -Os
-MAIN := hacky
+CFLAGS := -Wall -Wextra -g
+MAIN := ../test/hacky
 
 VPATH := src:src/*.c
 

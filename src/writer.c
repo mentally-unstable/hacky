@@ -12,7 +12,7 @@ void write_cmd(cmd_t *cmd, FILE *out) {
     int num;
 
     switch (cmd->type) {
-        case LCMD:
+        //case LCMD:
         case LREF:
         case ACMD:
             bin = args.hex ? hex(cmd->val) : bits(cmd->val, &buff[0]);
@@ -30,7 +30,7 @@ void write_cmd(cmd_t *cmd, FILE *out) {
 }
 
 int binary(cmd_t *cmd) {
-    unsigned _BitInt(16) num;
+    unsigned _BitInt(16) num = 0;
 
     if (uses_memory(cmd->comp))
         num = 0b0000000000001111;
